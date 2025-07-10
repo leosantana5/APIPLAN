@@ -42,6 +42,11 @@ def gerar_planograma(config_df, produtos_df):
     # Carregar configurações (retorna uma Series)
     config = carregar_configuracoes(config_df)
 
+    # Garantir que cor_rgb esteja em string "R,G,B"
+    produtos_df["cor_rgb"] = produtos_df["cor_rgb"].apply(
+        lambda x: ",".join(str(i) for i in x) if isinstance(x, (list, tuple)) else str(x)
+    )
+
     
     # Extrair valores
     try:
