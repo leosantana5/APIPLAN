@@ -1,31 +1,41 @@
-from fastapi import APIRouter, Request, Response
+from fastapi import APIRouter, Request
 from fastapi.responses import StreamingResponse, JSONResponse
 import pandas as pd
 from io import BytesIO
-from .planograma import gerar_planograma_teste
-import base64
-
+from .planograma import gerar_planograma
 
 router = APIRouter()
 
 @router.post("/gc")
-async def gerar_pdf_teste_hello_world():
+async def gerar_planograma_via_json(request: Request):
     try:
-        buffer = BytesIO()
+        body = await request.json()
 
-        # Cria PDF em memória com "Hello World"
-        with PdfPages(buffer) as pdf:
-            fig, ax = plt.subplots(figsize=(8.27, 11.69))  # A4
-            ax.text(0.5, 0.5, 'Hello World', fontsize=30, ha='center', va='center')
-            ax.axis('off')
-            pdf.savefig(fig)
-            plt.close(fig)
+        config_dict = body.get("config_planograma")
+        produtos_list = body.get("itens_produtos")
 
-        buffer.seek(0)
-        pdf_bytes = buffer.getvalue()
-        pdf_b64 = base64.b64encode(pdf_bytes).decode("utf-8")
+        if not config_dict or not produtos_list:
+            return JSONResponse(
+                status_code=400,
+                content={"success": False, "message": "Campos 'config_planograma' e 'itens_produtos' são obrigatórios."}
+            )
 
-        return JSONResponse(content={"pdf_base64": pdf_b64})
+        config_df = pd.DataFrame([config_dict])
+        produtos_df = pd.DataFrame(produtos_list)
+
+        # Gera o PDF em memória
+        pdf_buffer: BytesIO = gerar_planograma(config_df, produtos_df)
+
+        # Retorna como download
+        return StreamingResponse(
+            pdf_buffer,
+            media_type="application/pdf",
+            headers={"Content-Disposition": "attachment; filename=planograma.pdf"}
+        )
+
 
     except Exception as e:
-        return JSONResponse(status_code=500, content={"error": str(e)})
+        return JSONResponse(
+            status_code=500,
+            content={"success": False, "message": f"Erro ao gerar planograma: {str(e)}"}
+        )
