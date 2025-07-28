@@ -34,6 +34,12 @@ async def gerar_planograma_via_json(request: Request):
         #    headers={"Content-Disposition": "attachment; filename=planograma.pdf"}
         #)
         pdf_bytes = pdf_buffer.getvalue()
+        print(f"📄 Tamanho do PDF gerado: {len(pdf_bytes)} bytes")
+        print("📊 config_df:")
+        print(config_df)
+        
+        print("📊 produtos_df:")
+        print(produtos_df)
         return Response(
             content=pdf_bytes,
             media_type="application/pdf"
