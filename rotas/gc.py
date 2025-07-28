@@ -40,9 +40,17 @@ async def gerar_planograma_via_json(request: Request):
         
         print("📊 produtos_df:")
         print(produtos_df)
-        return Response(
-            content=pdf_bytes,
-            media_type="application/pdf"
+        pdf_b64 = base64.b64encode(pdf_bytes).decode("utf-8")
+        #return Response(
+        #    content=pdf_b64,
+        #    media_type="application/pdf"
+        #)
+        return JSONResponse(
+            content={
+                "success": True,
+                "message": "PDF gerado com sucesso",
+                "pdf_base64": pdf_b64
+            }
         )
 
     except Exception as e:
