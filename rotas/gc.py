@@ -2,7 +2,7 @@ from fastapi import APIRouter, Request, Response
 from fastapi.responses import StreamingResponse, JSONResponse
 import pandas as pd
 from io import BytesIO
-from .planograma import gerar_planograma
+from .planograma import gerar_planograma_teste
 import base64
 
 
