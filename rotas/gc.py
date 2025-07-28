@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, Response
 from fastapi.responses import StreamingResponse, JSONResponse
 import pandas as pd
 from io import BytesIO
 from .planograma import gerar_planograma
+
 
 router = APIRouter()
 
@@ -27,10 +28,15 @@ async def gerar_planograma_via_json(request: Request):
         pdf_buffer: BytesIO = gerar_planograma(config_df, produtos_df)
 
         # Retorna como download
-        return StreamingResponse(
-            pdf_buffer,
-            media_type="application/pdf",
-            headers={"Content-Disposition": "attachment; filename=planograma.pdf"}
+       # return StreamingResponse(
+       #     pdf_buffer,
+       #     media_type="application/pdf",
+        #    headers={"Content-Disposition": "attachment; filename=planograma.pdf"}
+        #)
+        pdf_bytes = pdf_buffer.getvalue()
+        return Response(
+            content=pdf_bytes,
+            media_type="application/pdf"
         )
 
     except Exception as e:
