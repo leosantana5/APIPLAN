@@ -26,7 +26,8 @@ async def gerar_planograma_via_json(request: Request):
         produtos_df = pd.DataFrame(produtos_list)
 
         # Gera o PDF em memória
-        pdf_buffer: BytesIO = gerar_planograma(config_df, produtos_df)
+        #pdf_buffer: BytesIO = gerar_planograma(config_df, produtos_df)
+        pdf_buffer: BytesIO = gerar_planograma_teste(config_df, produtos_df)
 
         # Retorna como download
        # return StreamingResponse(
