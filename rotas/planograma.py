@@ -38,6 +38,32 @@ def carregar_configuracoes(df: pd.DataFrame):
         print("Meu Planograma,8,100,5,40,10,15,20,10,10,15")
         raise
 
+def gerar_planograma_teste(config_df, produtos_df):
+    import matplotlib.pyplot as plt
+    from matplotlib.backends.backend_pdf import PdfPages
+    from io import BytesIO
+
+    buffer = BytesIO()
+    with PdfPages(buffer) as pdf:
+        fig, ax = plt.subplots(figsize=(10, 6))
+
+        # Exemplo: participação por marca
+        marcas = produtos_df["marca"]
+        participacoes = produtos_df["participacao"]
+
+        ax.bar(marcas, participacoes, color="skyblue")
+        ax.set_title("Participação por Marca")
+        ax.set_ylabel("Participação")
+        ax.set_xlabel("Marca")
+        plt.xticks(rotation=45)
+
+        pdf.savefig(fig)
+        plt.close(fig)
+
+    buffer.seek(0)
+    return buffer
+
+
 def gerar_planograma(config_df, produtos_df):
     # Carregar configurações (retorna uma Series)
     config = carregar_configuracoes(config_df)
