@@ -3,6 +3,7 @@ from fastapi.responses import StreamingResponse, JSONResponse
 import pandas as pd
 from io import BytesIO
 from .planograma import gerar_planograma
+import base64
 
 
 router = APIRouter()
